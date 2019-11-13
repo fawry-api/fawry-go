@@ -3,7 +3,7 @@ package fawry
 import (
 	"regexp"
 
-	"github.com/go-ozzo/ozzo-validation"
+	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/go-ozzo/ozzo-validation/is"
 )
 
@@ -46,7 +46,7 @@ func (charge Charge) Validate() error {
 		validation.Field(&charge.Amount, validation.Required, validation.Match(regexp.MustCompile(`^\d+\.\d\d$`))),
 		validation.Field(&charge.Description, validation.Required),
 		validation.Field(&charge.CustomerMobile, validation.Required),
-		validation.Field(&charge.ChargeItems),
+		validation.Field(&charge.ChargeItems, validation.Required),
 		validation.Field(&charge.CurrencyCode),
 		validation.Field(&charge.CardToken),
 		validation.Field(&charge.CustomerEmail, is.Email),
