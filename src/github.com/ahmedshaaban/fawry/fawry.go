@@ -10,28 +10,29 @@ import (
 	"strings"
 )
 
-const APIPath = "/ECommerceWeb/Fawry/payments/"
-const BaseUrl = "https://www.atfawry.com"
-const SandboxBaseUrl = "https://atfawry.fawrystaging.com"
+const apiPath = "/ECommerceWeb/Fawry/payments/"
+const baseURL = "https://www.atfawry.com"
+const sandboxBaseURL = "https://atfawry.fawrystaging.com"
 
-type FawryClient struct {
+// Client Struct
+type Client struct {
 	IsSandbox      bool
 	FawrySecureKey string
 }
 
-func (fc FawryClient) getURL() string {
+func (fc Client) getURL() string {
 	if fc.IsSandbox {
-		return SandboxBaseUrl + APIPath
+		return sandboxBaseURL + apiPath
 	}
-	return BaseUrl + APIPath
+	return baseURL + apiPath
 }
 
-func (fc FawryClient) getSignature(inputs []string) string {
+func (fc Client) getSignature(inputs []string) string {
 	sum := sha256.Sum256([]byte(strings.Join(inputs[:], ",")))
 	return hex.EncodeToString(sum[:])
 }
 
-func (fc FawryClient) ChargeRequest(charge Charge) (*http.Response, error) {
+func (fc Client) ChargeRequest(charge Charge) (*http.Response, error) {
 	err := charge.Validate()
 	if err != nil {
 		return nil, err
@@ -53,8 +54,6 @@ func (fc FawryClient) ChargeRequest(charge Charge) (*http.Response, error) {
 		return nil, err
 	}
 
-	fmt.Println(string(jsonBytes))
-
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonBytes))
 	req.Header.Set("Content-Type", "application/json")
 
@@ -67,7 +66,7 @@ func (fc FawryClient) ChargeRequest(charge Charge) (*http.Response, error) {
 	return resp, nil
 }
 
-func (fc FawryClient) RefundRequest(refund Refund) (*http.Response, error) {
+func (fc Client) RefundRequest(refund Refund) (*http.Response, error) {
 	err := refund.Validate()
 	if err != nil {
 		return nil, err
@@ -89,8 +88,6 @@ func (fc FawryClient) RefundRequest(refund Refund) (*http.Response, error) {
 		return nil, err
 	}
 
-	fmt.Println(string(jsonBytes))
-
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonBytes))
 	req.Header.Set("Content-Type", "application/json")
 
@@ -103,7 +100,7 @@ func (fc FawryClient) RefundRequest(refund Refund) (*http.Response, error) {
 	return resp, nil
 }
 
-func (fc FawryClient) StatusRequest(status Status) (*http.Response, error) {
+func (fc Client) StatusRequest(status Status) (*http.Response, error) {
 	err := status.Validate()
 	if err != nil {
 		return nil, err
@@ -117,8 +114,6 @@ func (fc FawryClient) StatusRequest(status Status) (*http.Response, error) {
 		fc.getSignature(signatureArray))
 
 	req, err := http.NewRequest("GET", url, nil)
-
-	fmt.Println(req.URL.String())
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
