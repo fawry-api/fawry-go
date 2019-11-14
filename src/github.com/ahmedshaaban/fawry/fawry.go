@@ -32,6 +32,9 @@ func (fc Client) getSignature(inputs []string) string {
 	return hex.EncodeToString(sum[:])
 }
 
+// ChargeRequest could be used to charge the customer with different payment methods.
+// 	It also might be used to create a reference number to be paid at Fawry's outlets or
+//	it can be used to direct debit the customer card using card token.
 func (fc Client) ChargeRequest(charge Charge) (*http.Response, error) {
 	err := charge.Validate()
 	if err != nil {
@@ -66,6 +69,7 @@ func (fc Client) ChargeRequest(charge Charge) (*http.Response, error) {
 	return resp, nil
 }
 
+// RefundRequest  can refund the payment again to the customer
 func (fc Client) RefundRequest(refund Refund) (*http.Response, error) {
 	err := refund.Validate()
 	if err != nil {
@@ -100,6 +104,7 @@ func (fc Client) RefundRequest(refund Refund) (*http.Response, error) {
 	return resp, nil
 }
 
+// StatusRequest can use Get Payment Status Service to retrieve the payment status for the charge request
 func (fc Client) StatusRequest(status Status) (*http.Response, error) {
 	err := status.Validate()
 	if err != nil {
