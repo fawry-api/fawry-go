@@ -1,12 +1,14 @@
 package fawry
 
 import (
+	"errors"
 	"regexp"
 
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/go-ozzo/ozzo-validation/is"
 )
 
+// ChargeItem Struct
 type ChargeItem struct {
 	ItemID      string `json:"itemId"`
 	Description string `json:"description"`
@@ -14,6 +16,7 @@ type ChargeItem struct {
 	Quantity    int    `json:"quantity"`
 }
 
+// Validate func for ChargeItem struct
 func (chargeItem ChargeItem) Validate() error {
 	return validation.ValidateStruct(&chargeItem,
 		validation.Field(&chargeItem.ItemID, validation.Required),
@@ -23,10 +26,11 @@ func (chargeItem ChargeItem) Validate() error {
 	)
 }
 
+// Charge Struct
 type Charge struct {
 	MerchantCode      string       `json:"merchantCode"`
 	MerchantRefNum    string       `json:"merchantRefNum"`
-	CustomerProfileId string       `json:"customerProfileId"`
+	CustomerProfileID string       `json:"customerProfileId"`
 	Amount            string       `json:"amount"`
 	Description       string       `json:"description"`
 	CustomerMobile    string       `json:"customerMobile"`
@@ -38,11 +42,23 @@ type Charge struct {
 	PaymentExpiry     int          `json:"paymentExpiry"`
 }
 
+// Customized validation func to check card if payment method is card
+func cardTokenRequired(paymentMethod string) validation.RuleFunc {
+	return func(value interface{}) error {
+		cardToken, _ := value.(string)
+		if paymentMethod == "CARD" && len(cardToken) == 0 {
+			return errors.New("Card token is required when payment method is card")
+		}
+		return nil
+	}
+}
+
+// Validate func for Charge Struct
 func (charge Charge) Validate() error {
 	return validation.ValidateStruct(&charge,
 		validation.Field(&charge.MerchantCode, validation.Required),
 		validation.Field(&charge.MerchantRefNum, validation.Required),
-		validation.Field(&charge.CustomerProfileId, validation.Required),
+		validation.Field(&charge.CustomerProfileID, validation.Required),
 		validation.Field(&charge.Amount, validation.Required, validation.Match(regexp.MustCompile(`^\d+\.\d\d$`))),
 		validation.Field(&charge.Description, validation.Required),
 		validation.Field(&charge.CustomerMobile, validation.Required),
@@ -52,5 +68,38 @@ func (charge Charge) Validate() error {
 		validation.Field(&charge.CustomerEmail, is.Email),
 		validation.Field(&charge.PaymentMethod),
 		validation.Field(&charge.PaymentExpiry),
+		validation.Field(&charge.CardToken, validation.By(cardTokenRequired(charge.PaymentMethod))),
+	)
+}
+
+// Refund Struct
+type Refund struct {
+	MerchantCode    string `json:"merchantCode"`
+	ReferenceNumber string `json:"referenceNumber"`
+	RefundAmount    string `json:"refundAmount"`
+	Reason          string `json:"reason"`
+}
+
+// Validate func for Refund Struct
+func (refund Refund) Validate() error {
+	return validation.ValidateStruct(&refund,
+		validation.Field(&refund.MerchantCode, validation.Required),
+		validation.Field(&refund.ReferenceNumber, validation.Required),
+		validation.Field(&refund.RefundAmount, validation.Required, validation.Match(regexp.MustCompile(`^\d+\.\d\d$`))),
+		validation.Field(&refund.Reason, validation.Required),
+	)
+}
+
+// Status Struct
+type Status struct {
+	MerchantCode   string `json:"merchantCode"`
+	MerchantRefNum string `json:"merchantRefNum"`
+}
+
+// Validate func for Status Struct
+func (status Status) Validate() error {
+	return validation.ValidateStruct(&status,
+		validation.Field(&status.MerchantCode, validation.Required),
+		validation.Field(&status.MerchantRefNum, validation.Required),
 	)
 }
