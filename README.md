@@ -1,7 +1,7 @@
 # fawry-go
 
 [![Build Status](https://travis-ci.com/fawry-api/fawry-go.svg?branch=master)](https://travis-ci.com/fawry-api/fawry-go)
-
+[![codecov](https://codecov.io/gh/fawry-api/fawry-go/badge.svg?branch=master)](https://codecov.io/gh/fawry-api/fawry-go?branch=master)
 ## Description
 
 fawry-go is a Go package interfacing with Fawry's payment gateway API. this package is inspired by Amr Bakry's ruby [gem](https://github.com/fawry-api/fawry "fawry-ruby§")
