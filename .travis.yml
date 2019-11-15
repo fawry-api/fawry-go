@@ -13,4 +13,6 @@ install:
 
 script:
   - go test -v -covermode=count -coverprofile=coverage.out
-  - $HOME/gopath/bin/goveralls -coverprofile=coverage.out -service=travis-ci
+
+  after_success:
+  - bash <(curl -s https://codecov.io/bash)
