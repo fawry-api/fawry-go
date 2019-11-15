@@ -18,7 +18,7 @@ Go 1.8 or above.
 
 Run the following command to install the package:
 ```
-go get github.com/ahmedshaaban/fawry-go
+go get github.com/fawry-api/fawry-go
 ```
 
 ### Charge Request
