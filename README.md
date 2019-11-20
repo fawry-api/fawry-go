@@ -34,10 +34,7 @@ import (
 )
 
 func main() {
-    fc := fawry.Client{
-        IsSandbox:      true,
-        FawrySecureKey: "SecuredKeyProvidedByFawry",
-    }
+    fc := fawry.NewClient("SecuredKeyProvidedByFawry", true)
 
     charge := fawry.Charge{
         MerchantCode:      "is0N+YQzlE4=",
@@ -89,10 +86,7 @@ import (
 )
 
 func main() {
-    fc := fawry.Client{
-        IsSandbox:      true,
-        FawrySecureKey: "SecuredKeyProvidedByFawry",
-    }
+    fc := fawry.NewClient("SecuredKeyProvidedByFawry", true)
 
     refund := fawry.Refund{
         MerchantCode:    "1013969",
@@ -130,10 +124,7 @@ import (
 )
 
 func main() {
-    fc := fawry.Client{
-        IsSandbox:      true,
-        FawrySecureKey: "SecuredKeyProvidedByFawry",
-    }
+    fc := fawry.NewClient("SecuredKeyProvidedByFawry", true)
 
     status := fawry.Status{
         MerchantCode:   "is0N+YQzlE4=",
@@ -157,6 +148,6 @@ func main() {
 ```
 
 ## TODO:
-- Read configuration keys (merchant code, secure key) from env vars
+- Read configuration keys (merchant code) from env vars
 - Add public API documentation to README
 - Increase code coverage
