@@ -5,8 +5,10 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
+	"os"
 	"strings"
 )
 
@@ -14,10 +16,37 @@ const apiPath = "/ECommerceWeb/Fawry/payments/"
 const baseURL = "https://www.atfawry.com"
 const sandboxBaseURL = "https://atfawry.fawrystaging.com"
 
+// ErrKeyMissing indicates security key missing
+var ErrKeyMissing = errors.New("Fawry security key missing")
+
 // Client Struct
 type Client struct {
 	IsSandbox      bool
 	FawrySecureKey string
+}
+
+// NewClientFromEnv creates new client from FAWRY_SECURE_KEY environment
+func NewClientFromEnv(sandbox bool) (*Client, error) {
+	securityKey, ok := os.LookupEnv("FAWRY_SECURE_KEY")
+	if !ok {
+		return nil, ErrKeyMissing
+	}
+	return &Client{
+		FawrySecureKey: securityKey,
+		IsSandbox: sandbox,
+	}
+}
+
+// NewClientFromEnv creates new client
+func NewClient(securityKey string, sandbox bool) (*Client, error) {
+	if securityKey == "" {
+		return nil, ErrKeyMissing
+	}
+	
+	return &Client{
+		FawrySecureKey: securityKey,
+		IsSandbox: sandbox,
+	}
 }
 
 func (fc Client) getURL() string {
